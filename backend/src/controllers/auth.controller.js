@@ -8,7 +8,7 @@ const isProduction = process.env.NODE_ENV === "production"
 const cookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: isProduction ? "none" : "lax",
     path: "/",
     maxAge: 24 * 60 * 60 * 1000
 }
@@ -16,7 +16,7 @@ const cookieOptions = {
 const clearCookieOptions = {
     httpOnly: true,
     secure: isProduction,
-    sameSite: "lax",
+    sameSite: isProduction ? "none" : "lax",
     path: "/"
 }
 
@@ -88,7 +88,7 @@ const registerUser = async (req, res) => {
             })
         }
 
-        // Validate JWT configuration before creating an account
+        // Validate JWT configuration
         const jwtSecret = getJwtSecret()
 
         // Check whether the user already exists
@@ -130,7 +130,6 @@ const registerUser = async (req, res) => {
         // Set authentication cookie
         res.cookie("token", token, cookieOptions)
 
-        // Return safe user details without the password
         return res.status(201).json({
             success: true,
             message: "User registered successfully",
@@ -173,7 +172,6 @@ const loginUser = async (req, res) => {
         ) {
             return res.status(400).json({
                 success: false,
-                // Exact wording expected by the existing test
                 message: "Email and Password are required"
             })
         }
@@ -197,7 +195,6 @@ const loginUser = async (req, res) => {
             email: normalizedEmail
         })
 
-        // Use a generic response for invalid credentials
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -242,7 +239,6 @@ const loginUser = async (req, res) => {
         // Set authentication cookie
         res.cookie("token", token, cookieOptions)
 
-        // Return safe user details without the password
         return res.status(200).json({
             success: true,
             message: "Login Successful",

@@ -1,6 +1,12 @@
 
+const API_BASE_URL = (
+  import.meta.env.VITE_API_URL || ''
+).replace(/\/+$/, '')
+
 const api = async (endpoint, options = {}) => {
-  const response = await fetch(endpoint, {
+  const url = `${API_BASE_URL}${endpoint}`
+
+  const response = await fetch(url, {
     ...options,
     credentials: 'include',
     headers: {
@@ -85,7 +91,5 @@ export const transferMoney = transactionData =>
     method: 'POST',
     body: JSON.stringify(transactionData)
   })
-
-
 
 export default api
